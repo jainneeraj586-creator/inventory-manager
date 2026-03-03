@@ -7,151 +7,186 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0a0f; --surface: #111118; --surface2: #0d0d15; --border: #1e1e2e;
-  --accent: #e8ff47; --accent2: #47ffe8; --danger: #ff4757; --warn: #ffa502;
-  --text: #f0f0f5; --muted: #5a5a7a; --green: #2ed573; --purple: #a78bfa;
+  --bg:#0a0a0f;--surface:#111118;--surface2:#0d0d15;--border:#1e1e2e;
+  --accent:#e8ff47;--accent2:#47ffe8;--danger:#ff4757;--warn:#ffa502;
+  --text:#f0f0f5;--muted:#5a5a7a;--green:#2ed573;--purple:#a78bfa;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-body { background:var(--bg); color:var(--text); font-family:'DM Mono',monospace; min-height:100vh; overflow-x:hidden; }
-body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse 80% 50% at 20% 20%,rgba(232,255,71,.04) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(71,255,232,.04) 0%,transparent 60%); pointer-events:none; z-index:0; }
-.sync-bar { position:fixed; top:0; left:0; right:0; z-index:999; height:3px; background:var(--border); }
-.sync-dot { position:fixed; top:10px; right:14px; z-index:999; display:flex; align-items:center; gap:.4rem; font-size:.65rem; font-family:'Syne',sans-serif; font-weight:600; text-transform:uppercase; letter-spacing:.08em; }
-.sdot-ind { width:7px; height:7px; border-radius:50%; }
-.sync-online .sdot-ind { background:var(--green); box-shadow:0 0 6px var(--green); animation:pulse 2s infinite; }
-.sync-offline .sdot-ind { background:var(--danger); }
-.sync-syncing .sdot-ind { background:var(--warn); animation:pulse .8s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-.nav { position:relative; z-index:10; display:flex; align-items:center; border-bottom:1px solid var(--border); background:var(--surface2); padding:0 2rem; margin-top:3px; }
-.logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.4rem; letter-spacing:-.03em; padding:1rem 1.5rem 1rem 0; border-right:1px solid var(--border); margin-right:1rem; }
-.logo span { color:var(--accent); }
-.nav-tab { padding:.95rem 1.2rem; font-family:'Syne',sans-serif; font-size:.78rem; font-weight:600; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; transition:all .2s; border-top:none; border-left:none; border-right:none; background:none; }
-.nav-tab:hover { color:var(--text); }
-.nav-tab.active { color:var(--accent); border-bottom:2px solid var(--accent); }
-.nav-spacer { flex:1; }
-.nav-stats { display:flex; gap:1.5rem; align-items:center; }
-.nstat { text-align:right; }
-.nstat-val { font-family:'Syne',sans-serif; font-weight:700; font-size:1rem; color:var(--accent); }
-.nstat-lbl { font-size:.62rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; }
-.loading-overlay { position:fixed; inset:0; background:var(--bg); z-index:500; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1rem; }
-.logo-big { font-family:'Syne',sans-serif; font-weight:800; font-size:2.5rem; }
-.logo-big span { color:var(--accent); }
-.spinner { width:32px; height:32px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; }
-@keyframes spin { to{transform:rotate(360deg)} }
-.load-msg { font-size:.8rem; color:var(--muted); }
-.page { display:none; position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:2rem; animation:fadeUp .3s ease; }
-.page.active { display:block; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-.toolbar { display:flex; gap:.75rem; margin-bottom:1.25rem; flex-wrap:wrap; align-items:center; }
-.search-box { flex:1; min-width:200px; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:.65rem 1rem; color:var(--text); font-family:'DM Mono',monospace; font-size:.85rem; outline:none; transition:border-color .2s; }
-.search-box:focus { border-color:var(--accent); }
-.search-box::placeholder { color:var(--muted); }
-select.fsel { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:.65rem 1rem; color:var(--text); font-family:'DM Mono',monospace; font-size:.82rem; outline:none; cursor:pointer; }
-.btn { padding:.65rem 1.2rem; border-radius:8px; border:none; cursor:pointer; font-family:'Syne',sans-serif; font-weight:600; font-size:.82rem; transition:all .15s; letter-spacing:.02em; }
-.btn-primary { background:var(--accent); color:#0a0a0f; }
-.btn-primary:hover { background:#d4eb00; transform:translateY(-1px); }
-.btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border); }
-.btn-ghost:hover { border-color:var(--accent2); color:var(--accent2); }
-.btn-purple { background:var(--purple); color:#0a0a0f; }
-.btn-purple:hover { background:#9370f5; }
-.btn-sm { padding:.35rem .7rem; font-size:.72rem; }
-.table-wrap { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
-table { width:100%; border-collapse:collapse; }
-thead tr { background:var(--surface2); border-bottom:1px solid var(--border); }
-th { padding:.85rem 1rem; text-align:left; font-family:'Syne',sans-serif; font-size:.68rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.12em; cursor:pointer; user-select:none; white-space:nowrap; }
-th:hover { color:var(--accent); }
-tr.item-row { border-bottom:1px solid var(--border); transition:background .15s; animation:rowIn .25s ease both; }
-@keyframes rowIn { from{opacity:0;transform:translateX(-6px)} to{opacity:1;transform:translateX(0)} }
-tr.item-row:hover { background:#14141e; }
-tr.item-row:last-child { border-bottom:none; }
-td { padding:.8rem 1rem; font-size:.82rem; vertical-align:middle; }
-.badge { display:inline-block; padding:.18rem .55rem; border-radius:999px; font-size:.68rem; font-family:'Syne',sans-serif; font-weight:600; }
-.stock-indicator { display:flex; align-items:center; gap:.45rem; }
-.sdot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
-.s-high .sdot { background:var(--green); box-shadow:0 0 6px var(--green); }
-.s-low .sdot { background:var(--warn); box-shadow:0 0 6px var(--warn); }
-.s-out .sdot { background:var(--danger); box-shadow:0 0 6px var(--danger); }
-.price-col { font-family:'Syne',sans-serif; font-weight:600; color:var(--accent2); }
-.actions { display:flex; gap:.35rem; }
-.act-btn { padding:.28rem .55rem; border-radius:6px; border:1px solid var(--border); background:transparent; cursor:pointer; font-size:.72rem; transition:all .15s; color:var(--muted); font-family:'DM Mono',monospace; }
-.act-btn:hover { border-color:var(--accent); color:var(--accent); }
-.act-btn.del:hover { border-color:var(--danger); color:var(--danger); }
-.table-footer { display:flex; justify-content:flex-end; align-items:center; gap:.75rem; padding:.8rem 1rem; border-top:1px solid var(--border); font-size:.78rem; color:var(--muted); background:var(--surface2); }
-.table-footer span { font-family:'Syne',sans-serif; font-weight:700; font-size:.95rem; color:var(--accent); }
-.empty-state { text-align:center; padding:4rem 1rem; color:var(--muted); }
-.empty-state .big { font-size:2.8rem; margin-bottom:.5rem; }
-.alert-banner { background:rgba(255,71,87,.08); border:1px solid rgba(255,71,87,.25); border-radius:8px; padding:.7rem 1rem; margin-bottom:1.2rem; display:flex; align-items:center; gap:.6rem; font-size:.78rem; color:#ff8f9a; }
-.alert-banner b { color:var(--danger); }
-.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.75); backdrop-filter:blur(5px); z-index:200; display:flex; align-items:center; justify-content:center; }
-.modal { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:2rem; width:90%; max-width:520px; animation:slideUp .25s ease; max-height:90vh; overflow-y:auto; }
-@keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-.modal h2 { font-family:'Syne',sans-serif; font-weight:700; font-size:1.15rem; margin-bottom:1.5rem; }
-.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:.85rem; margin-bottom:1.4rem; }
-.form-group { display:flex; flex-direction:column; gap:.3rem; }
-.form-group.full { grid-column:1/-1; }
-label { font-size:.65rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); font-family:'Syne',sans-serif; font-weight:600; }
-input[type=text],input[type=number],select.fform { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:.6rem .85rem; color:var(--text); font-family:'DM Mono',monospace; font-size:.83rem; outline:none; transition:border-color .2s; width:100%; }
-input:focus,select.fform:focus { border-color:var(--accent); }
-.modal-actions { display:flex; gap:.75rem; justify-content:flex-end; }
-.bill-builder { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.5rem; }
-.bill-builder h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:.9rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:1.2rem; }
-.bill-section { margin-bottom:1.5rem; }
-.bsec-title { font-family:'Syne',sans-serif; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); margin-bottom:.75rem; padding-bottom:.5rem; border-bottom:1px solid var(--border); }
-.customer-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.75rem; }
-.bill-items-header { display:grid; grid-template-columns:2fr 1fr 1fr 1fr auto; gap:.5rem; margin-bottom:.5rem; }
-.bill-items-header span { font-size:.65rem; font-family:'Syne',sans-serif; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); }
-.brow { display:grid; grid-template-columns:2fr 1fr 1fr 1fr auto; gap:.5rem; align-items:center; margin-bottom:.5rem; animation:rowIn .2s ease; }
-.brow input,.brow select { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:.5rem .65rem; color:var(--text); font-family:'DM Mono',monospace; font-size:.8rem; outline:none; width:100%; }
-.brow input:focus,.brow select:focus { border-color:var(--accent); }
-.brow-total { font-family:'Syne',sans-serif; font-weight:600; color:var(--accent2); font-size:.82rem; text-align:right; }
-.rmv-btn { background:transparent; border:1px solid var(--border); border-radius:6px; color:var(--muted); cursor:pointer; padding:.4rem .55rem; font-size:.75rem; transition:all .15s; }
-.rmv-btn:hover { border-color:var(--danger); color:var(--danger); }
-.bill-totals { border-top:1px solid var(--border); padding-top:1rem; display:flex; flex-direction:column; align-items:flex-end; gap:.4rem; }
-.btrow { display:flex; gap:2rem; align-items:center; font-size:.82rem; }
-.btrow .lbl { color:var(--muted); min-width:150px; text-align:right; }
-.btrow .val { font-family:'Syne',sans-serif; font-weight:600; min-width:80px; text-align:right; }
-.btrow.grand .val { font-size:1.1rem; color:var(--accent); }
-.btrow.grand .lbl { color:var(--text); }
-.pct-input { width:55px; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:.3rem .5rem; color:var(--text); font-family:'DM Mono',monospace; font-size:.78rem; outline:none; display:inline-block; }
-.invoices-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:1rem; }
-.invoice-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; transition:all .2s; animation:rowIn .25s ease; }
-.invoice-card:hover { border-color:rgba(232,255,71,.2); transform:translateY(-1px); }
-.inv-hdr { padding:1rem 1.2rem; display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--border); }
-.inv-id { font-family:'Syne',sans-serif; font-weight:700; font-size:.95rem; }
-.inv-date { font-size:.72rem; color:var(--muted); margin-top:2px; }
-.inv-status { padding:.25rem .7rem; border-radius:999px; font-size:.68rem; font-family:'Syne',sans-serif; font-weight:700; }
-.st-paid { background:rgba(46,213,115,.12); color:var(--green); border:1px solid rgba(46,213,115,.25); }
-.st-pending { background:rgba(255,165,2,.1); color:var(--warn); border:1px solid rgba(255,165,2,.25); }
-.st-cancelled { background:rgba(255,71,87,.1); color:var(--danger); border:1px solid rgba(255,71,87,.25); }
-.inv-body { padding:1rem 1.2rem; }
-.inv-cust { font-size:.82rem; margin-bottom:.35rem; }
-.inv-cust span { color:var(--muted); font-size:.72rem; }
-.inv-summary { font-size:.72rem; color:var(--muted); margin-bottom:.75rem; }
-.inv-footer { display:flex; justify-content:space-between; align-items:center; }
-.inv-amount { font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; color:var(--accent); }
-.inv-actions { display:flex; gap:.4rem; }
-.dash-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
-@media(max-width:800px){ .dash-grid{grid-template-columns:1fr 1fr;} }
-.dash-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.2rem; }
-.dash-icon { font-size:1.5rem; margin-bottom:.5rem; }
-.dash-val { font-family:'Syne',sans-serif; font-weight:800; font-size:1.6rem; }
-.dash-val.ac { color:var(--accent); } .dash-val.gr { color:var(--green); } .dash-val.wa { color:var(--warn); } .dash-val.pu { color:var(--purple); }
-.dash-lbl { font-size:.65rem; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); margin-top:.2rem; font-family:'Syne',sans-serif; }
-.dash-bottom { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-@media(max-width:700px){ .dash-bottom{grid-template-columns:1fr;} }
-.dash-sec { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.2rem; }
-.dash-sec h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:.78rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:1rem; }
-.ri-row { display:flex; justify-content:space-between; align-items:center; padding:.5rem 0; border-bottom:1px solid var(--border); }
-.ri-row:last-child { border-bottom:none; }
-.ri-id { font-family:'Syne',sans-serif; font-weight:600; font-size:.78rem; }
-.ri-cust { font-size:.7rem; color:var(--muted); }
-.ri-amt { font-family:'Syne',sans-serif; font-weight:700; color:var(--accent2); }
-.ls-row { display:flex; justify-content:space-between; align-items:center; padding:.45rem 0; border-bottom:1px solid var(--border); font-size:.8rem; }
-.ls-row:last-child { border-bottom:none; }
-.qty-badge { font-family:'Syne',sans-serif; font-weight:700; font-size:.75rem; padding:.15rem .5rem; border-radius:999px; }
-.qty-out { background:rgba(255,71,87,.12); color:var(--danger); }
-.qty-low { background:rgba(255,165,2,.1); color:var(--warn); }
-@media print { body * { visibility:hidden; } #printArea, #printArea * { visibility:visible; } #printArea { position:fixed; inset:0; background:white; color:black; padding:2rem; font-size:12px; } }
-#printArea { display:none; }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 20% 20%,rgba(232,255,71,.04) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(71,255,232,.04) 0%,transparent 60%);pointer-events:none;z-index:0;}
+.sync-bar{position:fixed;top:0;left:0;right:0;z-index:999;height:3px;background:var(--border);}
+.sync-dot{position:fixed;top:10px;right:14px;z-index:999;display:flex;align-items:center;gap:.4rem;font-size:.65rem;font-family:'Syne',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.08em;}
+.sdot-ind{width:7px;height:7px;border-radius:50%;}
+.sync-online .sdot-ind{background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite;}
+.sync-offline .sdot-ind{background:var(--danger);}
+.sync-syncing .sdot-ind{background:var(--warn);animation:pulse .8s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.nav{position:relative;z-index:10;display:flex;align-items:center;border-bottom:1px solid var(--border);background:var(--surface2);padding:0 2rem;margin-top:3px;flex-wrap:wrap;}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;letter-spacing:-.03em;padding:1rem 1.5rem 1rem 0;border-right:1px solid var(--border);margin-right:1rem;}
+.logo span{color:var(--accent);}
+.nav-tab{padding:.95rem 1.2rem;font-family:'Syne',sans-serif;font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;border-top:none;border-left:none;border-right:none;background:none;}
+.nav-tab:hover{color:var(--text);}
+.nav-tab.active{color:var(--accent);border-bottom:2px solid var(--accent);}
+.nav-spacer{flex:1;}
+.nav-stats{display:flex;gap:1.5rem;align-items:center;}
+.nstat{text-align:right;}
+.nstat-val{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--accent);}
+.nstat-lbl{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
+.loading-overlay{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;}
+.logo-big{font-family:'Syne',sans-serif;font-weight:800;font-size:2.5rem;}
+.logo-big span{color:var(--accent);}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-msg{font-size:.8rem;color:var(--muted);}
+.page{display:none;position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:2rem;animation:fadeUp .3s ease;}
+.page.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.toolbar{display:flex;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap;align-items:center;}
+.search-box{flex:1;min-width:200px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.65rem 1rem;color:var(--text);font-family:'DM Mono',monospace;font-size:.85rem;outline:none;transition:border-color .2s;}
+.search-box:focus{border-color:var(--accent);}
+.search-box::placeholder{color:var(--muted);}
+select.fsel{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.65rem 1rem;color:var(--text);font-family:'DM Mono',monospace;font-size:.82rem;outline:none;cursor:pointer;}
+.btn{padding:.65rem 1.2rem;border-radius:8px;border:none;cursor:pointer;font-family:'Syne',sans-serif;font-weight:600;font-size:.82rem;transition:all .15s;letter-spacing:.02em;}
+.btn-primary{background:var(--accent);color:#0a0a0f;}
+.btn-primary:hover{background:#d4eb00;transform:translateY(-1px);}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--accent2);color:var(--accent2);}
+.btn-purple{background:var(--purple);color:#0a0a0f;}
+.btn-purple:hover{background:#9370f5;}
+.btn-accent2{background:var(--accent2);color:#0a0a0f;}
+.btn-accent2:hover{background:#2ee8d5;}
+.btn-sm{padding:.35rem .7rem;font-size:.72rem;}
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--surface2);border-bottom:1px solid var(--border);}
+th{padding:.85rem 1rem;text-align:left;font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;cursor:pointer;user-select:none;white-space:nowrap;}
+th:hover{color:var(--accent);}
+tr.item-row{border-bottom:1px solid var(--border);transition:background .15s;animation:rowIn .25s ease both;}
+@keyframes rowIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+tr.item-row:hover{background:#14141e;}
+tr.item-row:last-child{border-bottom:none;}
+td{padding:.8rem 1rem;font-size:.82rem;vertical-align:middle;}
+.badge{display:inline-block;padding:.18rem .55rem;border-radius:999px;font-size:.68rem;font-family:'Syne',sans-serif;font-weight:600;}
+.stock-indicator{display:flex;align-items:center;gap:.45rem;}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.s-high .sdot{background:var(--green);box-shadow:0 0 6px var(--green);}
+.s-low .sdot{background:var(--warn);box-shadow:0 0 6px var(--warn);}
+.s-out .sdot{background:var(--danger);box-shadow:0 0 6px var(--danger);}
+.price-col{font-family:'Syne',sans-serif;font-weight:600;color:var(--accent2);}
+.actions{display:flex;gap:.35rem;}
+.act-btn{padding:.28rem .55rem;border-radius:6px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:.72rem;transition:all .15s;color:var(--muted);font-family:'DM Mono',monospace;}
+.act-btn:hover{border-color:var(--accent);color:var(--accent);}
+.act-btn.del:hover{border-color:var(--danger);color:var(--danger);}
+.table-footer{display:flex;justify-content:flex-end;align-items:center;gap:.75rem;padding:.8rem 1rem;border-top:1px solid var(--border);font-size:.78rem;color:var(--muted);background:var(--surface2);}
+.table-footer span{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;color:var(--accent);}
+.empty-state{text-align:center;padding:4rem 1rem;color:var(--muted);}
+.empty-state .big{font-size:2.8rem;margin-bottom:.5rem;}
+.alert-banner{background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.25);border-radius:8px;padding:.7rem 1rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:.6rem;font-size:.78rem;color:#ff8f9a;}
+.alert-banner b{color:var(--danger);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(5px);z-index:200;display:flex;align-items:center;justify-content:center;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;width:90%;max-width:520px;animation:slideUp .25s ease;max-height:90vh;overflow-y:auto;}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal h2{font-family:'Syne',sans-serif;font-weight:700;font-size:1.15rem;margin-bottom:1.5rem;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:1.4rem;}
+.form-group{display:flex;flex-direction:column;gap:.3rem;}
+.form-group.full{grid-column:1/-1;}
+label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-family:'Syne',sans-serif;font-weight:600;}
+input[type=text],input[type=number],select.fform{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.6rem .85rem;color:var(--text);font-family:'DM Mono',monospace;font-size:.83rem;outline:none;transition:border-color .2s;width:100%;}
+input:focus,select.fform:focus{border-color:var(--accent);}
+.modal-actions{display:flex;gap:.75rem;justify-content:flex-end;}
+.bill-builder{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;}
+.bill-builder h3{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:1.2rem;}
+.bill-section{margin-bottom:1.5rem;}
+.bsec-title{font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);}
+.customer-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;}
+.bill-items-header{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:.5rem;margin-bottom:.5rem;}
+.bill-items-header span{font-size:.65rem;font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);}
+.brow{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:.5rem;align-items:center;margin-bottom:.5rem;animation:rowIn .2s ease;}
+.brow input,.brow select{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.5rem .65rem;color:var(--text);font-family:'DM Mono',monospace;font-size:.8rem;outline:none;width:100%;}
+.brow input:focus,.brow select:focus{border-color:var(--accent);}
+.brow-total{font-family:'Syne',sans-serif;font-weight:600;color:var(--accent2);font-size:.82rem;text-align:right;}
+.rmv-btn{background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);cursor:pointer;padding:.4rem .55rem;font-size:.75rem;transition:all .15s;}
+.rmv-btn:hover{border-color:var(--danger);color:var(--danger);}
+.bill-totals{border-top:1px solid var(--border);padding-top:1rem;display:flex;flex-direction:column;align-items:flex-end;gap:.4rem;}
+.btrow{display:flex;gap:2rem;align-items:center;font-size:.82rem;}
+.btrow .lbl{color:var(--muted);min-width:150px;text-align:right;}
+.btrow .val{font-family:'Syne',sans-serif;font-weight:600;min-width:80px;text-align:right;}
+.btrow.grand .val{font-size:1.1rem;color:var(--accent);}
+.btrow.grand .lbl{color:var(--text);}
+.pct-input{width:55px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.3rem .5rem;color:var(--text);font-family:'DM Mono',monospace;font-size:.78rem;outline:none;display:inline-block;}
+.invoices-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem;}
+.invoice-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all .2s;animation:rowIn .25s ease;}
+.invoice-card:hover{border-color:rgba(232,255,71,.2);transform:translateY(-1px);}
+.inv-hdr{padding:1rem 1.2rem;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--border);}
+.inv-id{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;}
+.inv-date{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.inv-status{padding:.25rem .7rem;border-radius:999px;font-size:.68rem;font-family:'Syne',sans-serif;font-weight:700;}
+.st-paid{background:rgba(46,213,115,.12);color:var(--green);border:1px solid rgba(46,213,115,.25);}
+.st-pending{background:rgba(255,165,2,.1);color:var(--warn);border:1px solid rgba(255,165,2,.25);}
+.st-cancelled{background:rgba(255,71,87,.1);color:var(--danger);border:1px solid rgba(255,71,87,.25);}
+.inv-body{padding:1rem 1.2rem;}
+.inv-cust{font-size:.82rem;margin-bottom:.35rem;}
+.inv-cust span{color:var(--muted);font-size:.72rem;}
+.inv-summary{font-size:.72rem;color:var(--muted);margin-bottom:.75rem;}
+.inv-footer{display:flex;justify-content:space-between;align-items:center;}
+.inv-amount{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;color:var(--accent);}
+.inv-actions{display:flex;gap:.4rem;}
+.dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;}
+@media(max-width:800px){.dash-grid{grid-template-columns:1fr 1fr;}}
+.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem;}
+.dash-icon{font-size:1.5rem;margin-bottom:.5rem;}
+.dash-val{font-family:'Syne',sans-serif;font-weight:800;font-size:1.6rem;}
+.dash-val.ac{color:var(--accent);}.dash-val.gr{color:var(--green);}.dash-val.wa{color:var(--warn);}.dash-val.pu{color:var(--purple);}
+.dash-lbl{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-top:.2rem;font-family:'Syne',sans-serif;}
+.dash-bottom{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:700px){.dash-bottom{grid-template-columns:1fr;}}
+.dash-sec{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem;}
+.dash-sec h3{font-family:'Syne',sans-serif;font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:1rem;}
+.ri-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--border);}
+.ri-row:last-child{border-bottom:none;}
+.ri-id{font-family:'Syne',sans-serif;font-weight:600;font-size:.78rem;}
+.ri-cust{font-size:.7rem;color:var(--muted);}
+.ri-amt{font-family:'Syne',sans-serif;font-weight:700;color:var(--accent2);}
+.ls-row{display:flex;justify-content:space-between;align-items:center;padding:.45rem 0;border-bottom:1px solid var(--border);font-size:.8rem;}
+.ls-row:last-child{border-bottom:none;}
+.qty-badge{font-family:'Syne',sans-serif;font-weight:700;font-size:.75rem;padding:.15rem .5rem;border-radius:999px;}
+.qty-out{background:rgba(255,71,87,.12);color:var(--danger);}
+.qty-low{background:rgba(255,165,2,.1);color:var(--warn);}
+
+/* ── LEDGER STYLES ── */
+.ledger-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;}
+.ledger-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all .2s;animation:rowIn .25s ease;cursor:pointer;}
+.ledger-card:hover{border-color:rgba(71,255,232,.3);transform:translateY(-2px);}
+.lc-hdr{padding:1rem 1.2rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.lc-name{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;}
+.lc-contact{font-size:.7rem;color:var(--muted);margin-top:2px;}
+.lc-body{padding:1rem 1.2rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem;}
+.lc-stat{text-align:center;}
+.lc-stat-val{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;}
+.lc-stat-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:2px;font-family:'Syne',sans-serif;}
+.lc-footer{padding:.6rem 1.2rem;background:var(--surface2);font-size:.7rem;color:var(--muted);display:flex;justify-content:space-between;}
+/* Ledger Detail Modal */
+.ldg-modal{max-width:680px;}
+.ldg-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.5rem;}
+.ldg-sum-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:.85rem;text-align:center;}
+.ldg-sum-val{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;margin-bottom:.2rem;}
+.ldg-sum-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-family:'Syne',sans-serif;}
+.txn-list{display:flex;flex-direction:column;gap:.5rem;max-height:340px;overflow-y:auto;}
+.txn-row{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.7rem 1rem;transition:border-color .15s;}
+.txn-row:hover{border-color:var(--accent2);}
+.txn-left{display:flex;flex-direction:column;gap:.15rem;}
+.txn-id{font-family:'Syne',sans-serif;font-weight:600;font-size:.8rem;}
+.txn-date{font-size:.68rem;color:var(--muted);}
+.txn-items{font-size:.68rem;color:var(--muted);}
+.txn-right{display:flex;flex-direction:column;align-items:flex-end;gap:.25rem;}
+.txn-amt{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:var(--accent);}
+.ledger-section-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);}
+.balance-chip{padding:.2rem .6rem;border-radius:999px;font-size:.7rem;font-family:'Syne',sans-serif;font-weight:700;}
+.bal-clear{background:rgba(46,213,115,.12);color:var(--green);border:1px solid rgba(46,213,115,.3);}
+.bal-due{background:rgba(255,165,2,.1);color:var(--warn);border:1px solid rgba(255,165,2,.3);}
+
+@media print{body *{visibility:hidden;}#printArea,#printArea *{visibility:visible;}#printArea{position:fixed;inset:0;background:white;color:black;padding:2rem;font-size:12px;}}
+#printArea{display:none;}
 </style>
 </head>
 <body>
@@ -171,6 +206,7 @@ input:focus,select.fform:focus { border-color:var(--accent); }
   <button class="nav-tab" onclick="showPage('inventory',this)">Inventory</button>
   <button class="nav-tab" onclick="showPage('billing',this)">New Invoice</button>
   <button class="nav-tab" onclick="showPage('invoices',this)">Invoices</button>
+  <button class="nav-tab" onclick="showPage('ledger',this)">📒 Ledger</button>
   <div class="nav-spacer"></div>
   <div class="nav-stats">
     <div class="nstat"><div class="nstat-val" id="ns-items">0</div><div class="nstat-lbl">Items</div></div>
@@ -225,7 +261,7 @@ input:focus,select.fform:focus { border-color:var(--accent); }
     <div class="bill-section">
       <div class="bsec-title">Customer Details</div>
       <div class="customer-row">
-        <div class="form-group"><label>Customer Name *</label><input type="text" id="b-name" placeholder="e.g. Rahul Sharma"></div>
+        <div class="form-group"><label>Customer Name *</label><input type="text" id="b-name" placeholder="e.g. Rahul Sharma" list="customer-list"><datalist id="customer-list"></datalist></div>
         <div class="form-group"><label>Phone / Email</label><input type="text" id="b-contact" placeholder="phone or email"></div>
         <div class="form-group"><label>Invoice Date</label><input type="text" id="b-date"></div>
       </div>
@@ -270,6 +306,21 @@ input:focus,select.fform:focus { border-color:var(--accent); }
   <div id="inv-empty2" class="empty-state" style="display:none"><div class="big">🧾</div><p>No invoices yet.</p></div>
 </div>
 
+<!-- LEDGER PAGE -->
+<div class="page" id="page-ledger">
+  <div class="toolbar">
+    <input class="search-box" type="text" id="ldg-search" placeholder="Search customer name..." oninput="renderLedger()">
+    <select class="fsel" id="ldg-filter" onchange="renderLedger()">
+      <option value="">All Customers</option>
+      <option value="due">Has Due Balance</option>
+      <option value="clear">Fully Paid</option>
+    </select>
+    <button class="btn btn-ghost" onclick="exportLedgerCSV()">Export CSV</button>
+  </div>
+  <div id="ledger-grid" class="ledger-grid"></div>
+  <div id="ldg-empty" class="empty-state" style="display:none"><div class="big">📒</div><p>No customer ledgers yet.<br><span style="font-size:.75rem">Ledgers are created automatically when you save an invoice.</span></p></div>
+</div>
+
 <!-- ITEM MODAL -->
 <div class="modal-overlay" id="item-modal" style="display:none" onclick="closeOut(event,'item-modal')">
   <div class="modal">
@@ -302,6 +353,18 @@ input:focus,select.fform:focus { border-color:var(--accent); }
   </div>
 </div>
 
+<!-- LEDGER DETAIL MODAL -->
+<div class="modal-overlay" id="ledger-modal" style="display:none" onclick="closeOut(event,'ledger-modal')">
+  <div class="modal ldg-modal" style="max-width:680px">
+    <h2 id="ldg-modal-title">Customer Ledger</h2>
+    <div id="ldg-modal-content"></div>
+    <div class="modal-actions" style="margin-top:1rem">
+      <button class="btn btn-ghost" onclick="closeModal('ledger-modal')">Close</button>
+      <button class="btn btn-ghost" onclick="printLedger()">🖨️ Print Ledger</button>
+    </div>
+  </div>
+</div>
+
 <div id="printArea"></div>
 
 <script type="module">
@@ -329,9 +392,38 @@ const genId = () => 'INV-'+String(Date.now()).slice(-6)+Math.random().toString(3
 const catColors = {};
 const palette = [['#e8ff47'],['#47ffe8'],['#a78bfa'],['#fb923c'],['#34d399'],['#f472b6'],['#60a5fa'],['#facc15']];
 let ci = 0;
-function catColor(c) { if(!c) return '#3a3a5a'; if(!catColors[c]){catColors[c]=palette[ci%palette.length][0];ci++;} return catColors[c]; }
-function stockStatus(it) { if(it.quantity===0) return 'out'; if(it.quantity<=(it.threshold||5)) return 'low'; return 'high'; }
-function setSyncStatus(s) { const d=$('syncDot'); d.className='sync-dot sync-'+s; $('syncLbl').textContent=s==='online'?'Synced':s==='syncing'?'Syncing...':'Offline'; }
+function catColor(c){if(!c)return '#3a3a5a';if(!catColors[c]){catColors[c]=palette[ci%palette.length][0];ci++;}return catColors[c];}
+function stockStatus(it){if(it.quantity===0)return 'out';if(it.quantity<=(it.threshold||5))return 'low';return 'high';}
+function setSyncStatus(s){const d=$('syncDot');d.className='sync-dot sync-'+s;$('syncLbl').textContent=s==='online'?'Synced':s==='syncing'?'Syncing...':'Offline';}
+
+// ── LEDGER HELPERS ──
+// Build per-customer ledger data from invoices array
+function buildLedgers() {
+  const map = {};
+  invoices.forEach(inv => {
+    const key = inv.customer.trim().toLowerCase();
+    if (!map[key]) map[key] = {
+      name: inv.customer.trim(),
+      contact: inv.contact || '',
+      invoices: [],
+      totalBilled: 0,
+      totalPaid: 0,
+      totalPending: 0,
+      firstSeen: inv.createdAt,
+      lastSeen: inv.createdAt
+    };
+    const c = map[key];
+    c.invoices.push(inv);
+    c.totalBilled += inv.grand;
+    if (inv.status === 'paid') c.totalPaid += inv.grand;
+    else if (inv.status === 'pending') c.totalPending += inv.grand;
+    if (inv.createdAt < c.firstSeen) c.firstSeen = inv.createdAt;
+    if (inv.createdAt > c.lastSeen) { c.lastSeen = inv.createdAt; c.contact = inv.contact || c.contact; }
+  });
+  // Sort each customer's invoices newest first
+  Object.values(map).forEach(c => c.invoices.sort((a,b) => b.createdAt - a.createdAt));
+  return map;
+}
 
 // REALTIME LISTENERS
 onSnapshot(collection(db,'items'), snap => {
@@ -344,7 +436,10 @@ onSnapshot(collection(db,'items'), snap => {
 
 onSnapshot(query(collection(db,'invoices'),orderBy('createdAt','desc')), snap => {
   invoices = snap.docs.map(d=>({id:d.id,...d.data()}));
-  renderInvoices(); renderDashboard();
+  renderInvoices(); renderDashboard(); renderLedger();
+  // Update customer datalist
+  const names = [...new Set(invoices.map(i=>i.customer.trim()).filter(Boolean))].sort();
+  $('customer-list').innerHTML = names.map(n=>`<option value="${escH(n)}">`).join('');
   const rev = invoices.filter(i=>i.status==='paid').reduce((s,i)=>s+i.grand,0);
   $('ns-rev').textContent = rev>=1000?'₹'+(rev/1000).toFixed(1)+'k':fmt(rev);
 }, ()=>{});
@@ -358,6 +453,7 @@ window.showPage = (name, btn) => {
   $('page-'+name).classList.add('active');
   if(btn) btn.classList.add('active');
   if(name==='billing') initBilling();
+  if(name==='ledger') renderLedger();
 };
 
 // DASHBOARD
@@ -378,17 +474,17 @@ function renderDashboard() {
 }
 
 // INVENTORY
-window.setSort = (key) => { if(sortKey===key) sortDir*=-1; else{sortKey=key;sortDir=1;} renderInventory(); };
+window.setSort = (key) => { if(sortKey===key)sortDir*=-1;else{sortKey=key;sortDir=1;}renderInventory(); };
 
 function renderInventory() {
   const s=($('inv-search')||{value:''}).value.toLowerCase(), cf=($('inv-cat')||{value:''}).value, sf=($('inv-stock')||{value:''}).value;
   let f = items.filter(it=>(!s||it.name.toLowerCase().includes(s)||(it.sku||'').toLowerCase().includes(s))&&(!cf||it.category===cf)&&(!sf||stockStatus(it)===sf));
   f.sort((a,b)=>{ let va=a[sortKey]||'',vb=b[sortKey]||''; if(typeof va==='string'){va=va.toLowerCase();vb=(vb+'').toLowerCase();} return va<vb?-sortDir:va>vb?sortDir:0; });
-  const tb=$('inv-body'); if(!tb) return;
+  const tb=$('inv-body'); if(!tb)return;
   tb.innerHTML='';
   $('inv-empty').style.display = f.length===0?'block':'none';
   f.forEach(it=>{
-    const st=stockStatus(it), bg=catColor(it.category), val=(it.quantity*(it.price||0)).toFixed(2);
+    const st=stockStatus(it),bg=catColor(it.category),val=(it.quantity*(it.price||0)).toFixed(2);
     const tr=document.createElement('tr'); tr.className='item-row';
     tr.innerHTML=`<td><div style="font-weight:500">${escH(it.name)}</div>${it.notes?`<div style="font-size:.7rem;color:var(--muted)">${escH(it.notes)}</div>`:''}</td>
       <td>${it.category?`<span class="badge" style="background:${bg}20;color:${bg};border:1px solid ${bg}50">${escH(it.category)}</span>`:'<span style="color:var(--muted)">—</span>'}</td>
@@ -413,40 +509,39 @@ function renderInventory() {
 }
 window.renderInventory = renderInventory;
 
-window.adjQty = async (id,d) => { const it=items.find(i=>i.id===id); if(!it)return; setSyncStatus('syncing'); await updateDoc(doc(db,'items',id),{quantity:Math.max(0,it.quantity+d)}); };
-window.delItem = async (id) => { if(!confirm('Delete this item?'))return; setSyncStatus('syncing'); await deleteDoc(doc(db,'items',id)); };
+window.adjQty = async (id,d) => { const it=items.find(i=>i.id===id);if(!it)return;setSyncStatus('syncing');await updateDoc(doc(db,'items',id),{quantity:Math.max(0,it.quantity+d)}); };
+window.delItem = async (id) => { if(!confirm('Delete this item?'))return;setSyncStatus('syncing');await deleteDoc(doc(db,'items',id)); };
 
 window.openItemModal = (reset=true) => {
   if(reset){editItemId=null;$('item-modal-title').textContent='Add New Item';['name','sku','cat','qty','thr','price','notes'].forEach(f=>$('f-'+f).value='');$('f-thr').value='5';}
   $('item-modal').style.display='flex';
 };
 window.editItem = (id) => {
-  const it=items.find(i=>i.id===id); if(!it)return;
-  editItemId=id; $('item-modal-title').textContent='Edit Item';
-  $('f-name').value=it.name||''; $('f-sku').value=it.sku||''; $('f-cat').value=it.category||'';
-  $('f-qty').value=it.quantity??''; $('f-thr').value=it.threshold??5; $('f-price').value=it.price??''; $('f-notes').value=it.notes||'';
+  const it=items.find(i=>i.id===id);if(!it)return;
+  editItemId=id;$('item-modal-title').textContent='Edit Item';
+  $('f-name').value=it.name||'';$('f-sku').value=it.sku||'';$('f-cat').value=it.category||'';
+  $('f-qty').value=it.quantity??'';$('f-thr').value=it.threshold??5;$('f-price').value=it.price??'';$('f-notes').value=it.notes||'';
   openItemModal(false);
 };
 window.saveItem = async () => {
-  const name=$('f-name').value.trim(); if(!name){alert('Item name required.');return;}
+  const name=$('f-name').value.trim();if(!name){alert('Item name required.');return;}
   const data={name,sku:$('f-sku').value.trim(),category:$('f-cat').value.trim(),quantity:parseInt($('f-qty').value)||0,threshold:parseInt($('f-thr').value)||5,price:parseFloat($('f-price').value)||0,notes:$('f-notes').value.trim(),updatedAt:Date.now()};
   setSyncStatus('syncing');
   const id=editItemId||(Date.now().toString(36)+Math.random().toString(36).slice(2,6));
-  if(!editItemId) data.createdAt=Date.now();
+  if(!editItemId)data.createdAt=Date.now();
   await setDoc(doc(db,'items',id),data,{merge:true});
   closeModal('item-modal');
 };
 
 // BILLING
-function initBilling() { if(billRows.length===0)addBillRow(); if(!$('b-date').value)$('b-date').value=new Date().toLocaleDateString('en-IN'); calcTotals(); }
-
+function initBilling(){if(billRows.length===0)addBillRow();if(!$('b-date').value)$('b-date').value=new Date().toLocaleDateString('en-IN');calcTotals();}
 window.addBillRow = () => { billRows.push({id:Date.now(),itemId:'',qty:1,price:0,name:''}); renderBillRows(); };
-window.removeBillRow = (id) => { billRows=billRows.filter(r=>r.id!==id); if(billRows.length===0)addBillRow(); else{renderBillRows();calcTotals();} };
+window.removeBillRow = (id) => { billRows=billRows.filter(r=>r.id!==id);if(billRows.length===0)addBillRow();else{renderBillRows();calcTotals();} };
 
 function renderBillRows() {
-  const c=$('bill-rows'); c.innerHTML='';
+  const c=$('bill-rows');c.innerHTML='';
   billRows.forEach(row=>{
-    const d=document.createElement('div'); d.className='brow'; d.id='br-'+row.id;
+    const d=document.createElement('div');d.className='brow';d.id='br-'+row.id;
     const opts=items.map(it=>`<option value="${it.id}" ${row.itemId===it.id?'selected':''}>${escH(it.name)} (${it.quantity} in stock)</option>`).join('');
     d.innerHTML=`<select onchange="bItemChange(${row.id},this.value)"><option value="">-- Select item --</option>${opts}<option value="custom" ${row.itemId==='custom'?'selected':''}>Custom item...</option></select>
       <input type="number" value="${row.qty}" min="1" oninput="bQtyChange(${row.id},this.value)">
@@ -455,7 +550,7 @@ function renderBillRows() {
       <button class="rmv-btn" onclick="removeBillRow(${row.id})">✕</button>`;
     c.appendChild(d);
     if(row.itemId==='custom'){
-      const nd=document.createElement('div'); nd.style.cssText='grid-column:1;margin-top:-.4rem';
+      const nd=document.createElement('div');nd.style.cssText='grid-column:1;margin-top:-.4rem';
       nd.innerHTML=`<input type="text" value="${escH(row.name||'')}" placeholder="Item description" oninput="bNameChange(${row.id},this.value)" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:.45rem .65rem;color:var(--text);font-family:'DM Mono',monospace;font-size:.78rem;outline:none;width:100%">`;
       d.after(nd);
     }
@@ -463,17 +558,17 @@ function renderBillRows() {
   calcTotals();
 }
 
-window.bItemChange = (id,val) => { const r=billRows.find(r=>r.id===id); if(!r)return; r.itemId=val; if(val&&val!=='custom'){const it=items.find(i=>i.id===val);if(it){r.price=it.price||0;r.name=it.name;}} else r.name=''; renderBillRows(); };
-window.bQtyChange = (id,val) => { const r=billRows.find(r=>r.id===id); if(r){r.qty=parseFloat(val)||1;calcTotals();} };
-window.bPriceChange = (id,val) => { const r=billRows.find(r=>r.id===id); if(r){r.price=parseFloat(val)||0;calcTotals();} };
-window.bNameChange = (id,val) => { const r=billRows.find(r=>r.id===id); if(r)r.name=val; };
+window.bItemChange = (id,val) => { const r=billRows.find(r=>r.id===id);if(!r)return;r.itemId=val;if(val&&val!=='custom'){const it=items.find(i=>i.id===val);if(it){r.price=it.price||0;r.name=it.name;}}else r.name='';renderBillRows(); };
+window.bQtyChange = (id,val) => { const r=billRows.find(r=>r.id===id);if(r){r.qty=parseFloat(val)||1;calcTotals();} };
+window.bPriceChange = (id,val) => { const r=billRows.find(r=>r.id===id);if(r){r.price=parseFloat(val)||0;calcTotals();} };
+window.bNameChange = (id,val) => { const r=billRows.find(r=>r.id===id);if(r)r.name=val; };
 
 window.calcTotals = () => {
-  billRows.forEach(row=>{ const el=document.querySelector(`#br-${row.id} .brow-total`); if(el)el.textContent=fmt(row.qty*(row.price||0)); });
+  billRows.forEach(row=>{ const el=document.querySelector(`#br-${row.id} .brow-total`);if(el)el.textContent=fmt(row.qty*(row.price||0)); });
   const sub=billRows.reduce((s,r)=>s+r.qty*(r.price||0),0);
-  const dp=parseFloat($('b-disc').value)||0, tp=parseFloat($('b-tax').value)||0;
-  const da=sub*dp/100, ad=sub-da, ta=ad*tp/100, grand=ad+ta;
-  $('b-sub').textContent=fmt(sub); $('b-disc-amt').textContent='−'+fmt(da); $('b-tax-amt').textContent=fmt(ta); $('b-grand').textContent=fmt(grand);
+  const dp=parseFloat($('b-disc').value)||0,tp=parseFloat($('b-tax').value)||0;
+  const da=sub*dp/100,ad=sub-da,ta=ad*tp/100,grand=ad+ta;
+  $('b-sub').textContent=fmt(sub);$('b-disc-amt').textContent='−'+fmt(da);$('b-tax-amt').textContent=fmt(ta);$('b-grand').textContent=fmt(grand);
   return {subtotal:sub,discPct:dp,discAmt:da,taxPct:tp,taxAmt:ta,grand};
 };
 
@@ -510,14 +605,15 @@ function buildInvHTML(data,id) {
   </div>`;
 }
 
-window.previewInvoice = () => { const d=getBillData(); if(!d.customer){alert('Enter customer name.');return;} $('preview-content').innerHTML=buildInvHTML(d,'PREVIEW'); $('preview-modal').style.display='flex'; };
+window.previewInvoice = () => { const d=getBillData();if(!d.customer){alert('Enter customer name.');return;}$('preview-content').innerHTML=buildInvHTML(d,'PREVIEW');$('preview-modal').style.display='flex'; };
 window.saveInvoice = async (status) => {
-  const data=getBillData(); if(!data.customer){alert('Enter customer name.');return;}
+  const data=getBillData();if(!data.customer){alert('Enter customer name.');return;}
   if(!data.rows.length||data.rows.every(r=>!r.name)){alert('Add at least one item.');return;}
-  const id=genId(); setSyncStatus('syncing');
+  const id=genId();setSyncStatus('syncing');
   await setDoc(doc(db,'invoices',id),{...data,id,status,createdAt:Date.now()});
   for(const r of data.rows) if(r.itemId&&r.itemId!=='custom'){const it=items.find(i=>i.id===r.itemId);if(it)await updateDoc(doc(db,'items',r.itemId),{quantity:Math.max(0,it.quantity-r.qty)});}
-  clearBill(); alert(`✅ Invoice ${id} saved as ${status}!`);
+  clearBill();
+  alert(`✅ Invoice ${id} saved as ${status}!\n📒 Ledger for "${data.customer}" has been updated.`);
 };
 window.clearBill = () => { $('b-name').value='';$('b-contact').value='';$('b-date').value=new Date().toLocaleDateString('en-IN');$('b-disc').value='0';$('b-tax').value='18';billRows=[];addBillRow(); };
 
@@ -525,10 +621,10 @@ window.clearBill = () => { $('b-name').value='';$('b-contact').value='';$('b-dat
 function renderInvoices() {
   const s=($('inv-search2')||{value:''}).value.toLowerCase(), sf=($('inv-status-f')||{value:''}).value;
   const f=invoices.filter(i=>(!s||i.customer.toLowerCase().includes(s)||i.id.toLowerCase().includes(s))&&(!sf||i.status===sf));
-  const g=$('invoices-grid'); if(!g)return;
-  g.innerHTML=''; $('inv-empty2').style.display=f.length===0?'block':'none';
+  const g=$('invoices-grid');if(!g)return;
+  g.innerHTML='';$('inv-empty2').style.display=f.length===0?'block':'none';
   f.forEach(inv=>{
-    const c=document.createElement('div'); c.className='invoice-card';
+    const c=document.createElement('div');c.className='invoice-card';
     c.innerHTML=`<div class="inv-hdr"><div><div class="inv-id">${escH(inv.id)}</div><div class="inv-date">${escH(inv.date)}</div></div><span class="inv-status st-${inv.status}">${inv.status}</span></div>
       <div class="inv-body">
         <div class="inv-cust">${escH(inv.customer)}${inv.contact?` <span>${escH(inv.contact)}</span>`:''}</div>
@@ -545,10 +641,104 @@ function renderInvoices() {
   });
 }
 window.renderInvoices = renderInvoices;
-window.viewInv = (id) => { const inv=invoices.find(i=>i.id===id); if(!inv)return; $('preview-content').innerHTML=buildInvHTML(inv,inv.id); $('preview-modal').style.display='flex'; };
-window.toggleSt = async (id) => { const inv=invoices.find(i=>i.id===id); if(!inv)return; setSyncStatus('syncing'); await updateDoc(doc(db,'invoices',id),{status:inv.status==='paid'?'pending':'paid'}); };
-window.delInv = async (id) => { if(!confirm('Delete invoice?'))return; setSyncStatus('syncing'); await deleteDoc(doc(db,'invoices',id)); };
-window.printInv = () => { const c=$('preview-content').innerHTML; $('printArea').innerHTML=c; $('printArea').style.display='block'; window.print(); $('printArea').style.display='none'; };
+window.viewInv = (id) => { const inv=invoices.find(i=>i.id===id);if(!inv)return;$('preview-content').innerHTML=buildInvHTML(inv,inv.id);$('preview-modal').style.display='flex'; };
+window.toggleSt = async (id) => { const inv=invoices.find(i=>i.id===id);if(!inv)return;setSyncStatus('syncing');await updateDoc(doc(db,'invoices',id),{status:inv.status==='paid'?'pending':'paid'}); };
+window.delInv = async (id) => { if(!confirm('Delete invoice?'))return;setSyncStatus('syncing');await deleteDoc(doc(db,'invoices',id)); };
+window.printInv = () => { const c=$('preview-content').innerHTML;$('printArea').innerHTML=c;$('printArea').style.display='block';window.print();$('printArea').style.display='none'; };
+
+// ── LEDGER PAGE ──
+function renderLedger() {
+  const g=$('ledger-grid');if(!g)return;
+  const s=($('ldg-search')||{value:''}).value.toLowerCase();
+  const ff=($('ldg-filter')||{value:''}).value;
+  const ledgers = buildLedgers();
+  let entries = Object.values(ledgers).filter(c => {
+    const matchS = !s || c.name.toLowerCase().includes(s);
+    const matchF = !ff || (ff==='due'&&c.totalPending>0) || (ff==='clear'&&c.totalPending===0);
+    return matchS && matchF;
+  });
+  // Sort by last activity
+  entries.sort((a,b)=>b.lastSeen-a.lastSeen);
+  g.innerHTML='';
+  $('ldg-empty').style.display = entries.length===0?'block':'none';
+  entries.forEach(c=>{
+    const hasDue = c.totalPending > 0;
+    const card = document.createElement('div');
+    card.className='ledger-card';
+    card.onclick = () => openLedgerDetail(c.name.trim().toLowerCase());
+    const initials = c.name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();
+    const lastDate = new Date(c.lastSeen).toLocaleDateString('en-IN');
+    card.innerHTML=`
+      <div class="lc-hdr">
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent2)30,var(--purple));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:.82rem;color:#0a0a0f;flex-shrink:0">${escH(initials)}</div>
+          <div>
+            <div class="lc-name">${escH(c.name)}</div>
+            <div class="lc-contact">${escH(c.contact||'No contact info')}</div>
+          </div>
+        </div>
+        <span class="balance-chip ${hasDue?'bal-due':'bal-clear'}">${hasDue?'Due':'Clear'}</span>
+      </div>
+      <div class="lc-body">
+        <div class="lc-stat"><div class="lc-stat-val" style="color:var(--accent)">${c.invoices.length}</div><div class="lc-stat-lbl">Invoices</div></div>
+        <div class="lc-stat"><div class="lc-stat-val" style="color:var(--green)">${fmt(c.totalPaid)}</div><div class="lc-stat-lbl">Paid</div></div>
+        <div class="lc-stat"><div class="lc-stat-val" style="color:${hasDue?'var(--warn)':'var(--muted)'}">${fmt(c.totalPending)}</div><div class="lc-stat-lbl">Pending</div></div>
+      </div>
+      <div class="lc-footer"><span>Total Billed: <b style="color:var(--text)">${fmt(c.totalBilled)}</b></span><span>Last: ${lastDate}</span></div>`;
+    g.appendChild(card);
+  });
+}
+window.renderLedger = renderLedger;
+
+window.openLedgerDetail = (key) => {
+  const ledgers = buildLedgers();
+  const c = ledgers[key];
+  if(!c) return;
+  $('ldg-modal-title').textContent = `📒 ${c.name}`;
+  const hasDue = c.totalPending > 0;
+  const html = `
+    <div class="ldg-summary">
+      <div class="ldg-sum-card"><div class="ldg-sum-val" style="color:var(--accent)">${c.invoices.length}</div><div class="ldg-sum-lbl">Total Bills</div></div>
+      <div class="ldg-sum-card"><div class="ldg-sum-val" style="color:var(--accent2)">${fmt(c.totalBilled)}</div><div class="ldg-sum-lbl">Total Billed</div></div>
+      <div class="ldg-sum-card"><div class="ldg-sum-val" style="color:var(--green)">${fmt(c.totalPaid)}</div><div class="ldg-sum-lbl">Amount Paid</div></div>
+      <div class="ldg-sum-card"><div class="ldg-sum-val" style="color:${hasDue?'var(--warn)':'var(--green)'}">${fmt(c.totalPending)}</div><div class="ldg-sum-lbl">${hasDue?'Due Balance':'Balance'}</div></div>
+    </div>
+    <div class="ledger-section-title">Transaction History</div>
+    <div class="txn-list">
+      ${c.invoices.map(inv=>`
+        <div class="txn-row">
+          <div class="txn-left">
+            <div class="txn-id">${escH(inv.id)}</div>
+            <div class="txn-date">📅 ${escH(inv.date)} · ${new Date(inv.createdAt).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</div>
+            <div class="txn-items">${(inv.rows||[]).slice(0,3).map(r=>escH(r.name||'—')).join(', ')}${(inv.rows||[]).length>3?'…':''}</div>
+          </div>
+          <div class="txn-right">
+            <div class="txn-amt">${fmt(inv.grand)}</div>
+            <span class="inv-status st-${inv.status}">${inv.status}</span>
+            <button class="act-btn btn-sm" onclick="viewInv('${inv.id}');closeModal('ledger-modal');" style="font-size:.65rem">View</button>
+          </div>
+        </div>`).join('')}
+    </div>
+    ${c.contact?`<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.75rem;color:var(--muted)">📞 Contact: <span style="color:var(--text)">${escH(c.contact)}</span></div>`:''}`;
+  $('ldg-modal-content').innerHTML = html;
+  $('ledger-modal').style.display='flex';
+};
+
+window.printLedger = () => {
+  const content = $('ldg-modal-content').innerHTML;
+  const title = $('ldg-modal-title').textContent;
+  $('printArea').innerHTML=`<h2 style="margin-bottom:1rem">${title}</h2>${content}`;
+  $('printArea').style.display='block'; window.print(); $('printArea').style.display='none';
+};
+
+window.exportLedgerCSV = () => {
+  const ledgers = buildLedgers();
+  const rows = [['Customer','Contact','Total Invoices','Total Billed','Amount Paid','Pending Balance','Last Activity']];
+  Object.values(ledgers).forEach(c=>{
+    rows.push([c.name,c.contact||'',c.invoices.length,c.totalBilled.toFixed(2),c.totalPaid.toFixed(2),c.totalPending.toFixed(2),new Date(c.lastSeen).toLocaleDateString('en-IN')]);
+  });
+  dlCSV(rows,'ledger.csv');
+};
 
 // EXPORTS
 window.exportCSV = () => dlCSV([['Name','SKU','Category','Qty','Low At','Price','Value','Notes'],...items.map(it=>[it.name,it.sku||'',it.category||'',it.quantity,it.threshold||5,it.price||0,(it.quantity*(it.price||0)).toFixed(2),it.notes||''])],'inventory.csv');
@@ -557,7 +747,7 @@ function dlCSV(rows,name){const a=document.createElement('a');a.href=URL.createO
 
 // MODALS
 window.closeModal = id => $(id).style.display='none';
-window.closeOut = (e,id) => { if(e.target.id===id) closeModal(id); };
+window.closeOut = (e,id) => { if(e.target.id===id)closeModal(id); };
 </script>
 </body>
 </html>
