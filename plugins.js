@@ -1,5 +1,5 @@
 /**
- * INVOX PLUGINS — plugins.js
+ * JAIN PLUGINS — plugins.js
  * ─────────────────────────────────────────────
  * Adds:  1) WhatsApp message sender for invoices
  *        2) Purchase Order (Stock-In) with supplier details
